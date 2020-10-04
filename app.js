@@ -1,20 +1,26 @@
 const express = require("express"),
   bodyParser = require("body-parser"),
-  mysql = require("mysql");
+  mysql = require("mysql"),
+  path = require('path'),
+  dotenv = require('dotenv');
 
+dotenv.config({ path: './.env' })
 const app = express();
 
 app.use(bodyParser.urlencoded({ extended: true }));
 app.set("view engine", "ejs");
+
+const publicDirectory = path.join(__dirname, './public');
+app.use(express.static(publicDirectory));
 //=======================================================
 //Database Create Connection
 //=======================================================
 var db = mysql.createConnection({
-  host: "127.0.0.1",
-  user: "root",
-  port: "3306",
-  password: "qaz1wsx2edc3",
-  database: "todoapp",
+  host: process.env.DATABASE_HOST,
+  user: process.env.DATABASE_USER,
+  port: process.env.DATABASE_PORT,
+  password: process.env.DATABASE_PASSWORD,
+  database: process.env.DATABASE
 });
 
 //=======================================================
@@ -43,6 +49,8 @@ app.get("/", (req, res) => {
 app.get("/todos", (req, res) => {
   res.render("todos");
 });
+
+app.post("/todos",)
 
 app.listen(3000, () => {
   console.log("Connected to the server on port 3000!!... enjoy coding..");
