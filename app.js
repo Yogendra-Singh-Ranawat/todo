@@ -24,7 +24,7 @@ var db = mysql.createConnection({
 });
 
 //=======================================================
-//Database onnected
+//Database Connected
 //=======================================================
 
 db.connect((err) => {
@@ -42,16 +42,13 @@ db.connect((err) => {
 //=====================
 //landing page
 //=====================
-app.get("/", (req, res) => {
-  res.render("landing");
-});
+app.use('/', require('./routes/index'));
 
 app.get("/todos", (req, res) => {
   res.render("todos");
 });
 
-app.post("/todos",)
 
 app.listen(3000, () => {
   console.log("Connected to the server on port 3000!!... enjoy coding..");
-});
+}); 
