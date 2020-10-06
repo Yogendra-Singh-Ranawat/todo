@@ -1,11 +1,27 @@
 <%-include("./partials/header")%>
+
 <div class="container">
   <header class="jumbotron">
     <div class="container">
       <h1>Welcome to your personal todo list</h1>
       <p>Simple web app to improve your productivity</p>
+      <p>
+        <a class="btn btn-lg btn-primary" href="/todos/new"> Add New Todo</a>
+      </p>
     </div>
   </header>
+  <div class="row text-center" style="dislpay:flex; flex-wrap:wrap;">
+    <% todos.forEach((todo) => { %>
+    <div class="col-md-3 col-sm-6">
+      <h4> <%=todo.task %> </h4>
+      <a class="btn btn-xs btn-warning" href="/todos/<%= todo.taskid %>/edit"> Edit </a>
+      <form class="delete-form" action="/todos/<%= todo.taskid %>?_method=DELETE" method="POST">
+        <button class="btn btn-xs btn-danger"> Delete</button>
+      </form>
+    </div>
+    <%}) %>
+  </div>
 </div>
+
 
 <%-include("./partials/footer")%>

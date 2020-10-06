@@ -5,15 +5,10 @@ const express = require("express"),
     mysql = require("mysql"),
     path = require('path'),
     router = express.Router(),
+    passport = require('passport'),
     dotenv = require('dotenv');
 
-var db = mysql.createConnection({
-    host: process.env.DATABASE_HOST,
-    user: process.env.DATABASE_USER,
-    port: process.env.DATABASE_PORT,
-    password: process.env.DATABASE_PASSWORD,
-    database: process.env.DATABASE
-});
+dotenv.config({ path: './.env' });
 
 router.get("/", (req, res) => {
     res.render("landing");
@@ -24,51 +19,26 @@ router.get("/register", (req, res) => {
 });
 
 
-router.post("/register", (req, res) => {
-    const { name, email, password, passwordConfirm } = req.body;
-    let query = 'SELECT email FROM users WHERE email=?';
-    db.query(query, [email], (error, result) => {
-        if (error) {
-            console.log(error);
-        }
-
-        if (result.length > 0) {
-            console.log(email + ' already in use');
-            return res.render('register');
-        }
-        else if (password !== passwordConfirm) {
-            console.log('Password do not match ');
-            return res.render('register');
-        }
-        let query1 = 'INSERT INTO users SET ?';
-        db.query(query1, { name: name, email: email, password: password }, (error, result) => {
-            if (error) {
-                console.log(error);
-            }
-            else {
-                console.log(name + ', You had successfully registered');
-                return res.render('landing');
-            }
-        });
-    });
+router.post("/register", passport.authenticate('local-signup'), (req, res) => {
+    console.log(req.body);
 });
 
 router.get("/login", (req, res) => {
     res.render("login");
 });
 
-// router.post("/login", passport.authenticate("local",
-//     {
-//         successRedirect: "/campgrounds",
-//         failureRedirect: "/login",
-//         failureFlash: true
-//     }), function (req, res) {
-//     });
+router.post("/login", passport.authenticate('local-login', {
+    successRedirect: '/todos', // redirect to the secure profile section
+    failureRedirect: '/login', // redirect back to the signup page if there is an error
+    failureFlash: true // allow flash messages
+}), (req, res) => {
+    console.log("hello");
+});
 
-// router.get("/logout", function (req, res) {
-//     req.logout();
-//     req.flash("success", "Logged Out!!");
-//     res.redirect("/");
-// });
+router.get("/logout", (req, res) => {
+    req.session.destroy();
+    req.logout();
+    res.redirect("/");
+});
 
 module.exports = router;
